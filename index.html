@@ -1,38 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KunalCSS Engine</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MasalaCSS Engine</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="light">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="logo">MasalaCSS</div>
+      <button id="toggle" class="theme-toggle">Toggle to Dark</button>
+    </nav>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">KunalCSS</div>
-    <button class="theme-toggle">Toggle</button>
-  </nav>
+    <!-- Main -->
+    <div class="container">
+      <!-- Editor -->
+      <div class="card editor">
+        <div class="card-header">
+          Editor
 
-  <!-- Main -->
-  <div class="container">
+          <!-- Unit Toggle -->
+          <div id="unit" class="unit-toggle">
+            <label><input type="radio" name="unit" value="px" checked /> px</label>
+            <label><input type="radio" name="unit" value="rem" /> rem</label>
+            <label><input type="radio" name="unit" value="%" /> %</label>
+          </div>
+        </div>
 
-    <!-- Editor -->
-    <div class="card editor">
-      <div class="card-header">Editor</div>
-      <textarea id="text-area" placeholder="kunal-p-4 kunal-bg-red kunal-c-white"></textarea>
-    </div>
+        <textarea
+          id="text-area"
+          placeholder="masala-p-4 masala-bg-red masala-c-white"
+        ></textarea>
 
-    <!-- Preview -->
-    <div class="card preview">
-      <div class="card-header">Preview</div>
-      <div class="preview-box">
-        <div id="preview" class="preview-content">Box</div>
+        <!-- CSS Output -->
+        <div class="css-output">
+          <div class="output-header">
+            Generated CSS
+
+            <!-- Copy Button -->
+            <button class="copy-btn">Copy</button>
+          </div>
+
+          <pre id="css-preview">/* styles will appear here */</pre>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="card preview">
+        <div class="card-header">Preview</div>
+        <div class="preview-box">
+          <div id="preview" class="preview-content">Box</div>
+        </div>
       </div>
     </div>
 
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

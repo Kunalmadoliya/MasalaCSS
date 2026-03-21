@@ -1,65 +1,98 @@
-const obj = {
-  p: "padding",
-  pt: "paddingTop",
-  pb: "paddingBottom",
-  pl: "paddingLeft",
-  pr: "paddingRight",
-
-  m: "margin",
-  mt: "marginTop",
-  mb: "marginBottom",
-  ml: "marginLeft",
-  mr: "marginRight",
-
-  c: "color",
-  bg: "backgroundColor",
-
-  fs: "fontSize",
-  fw: "fontWeight",
-
-  w: "width",
-  h: "height",
-
-  d: "display",
-  f: "flex",
-  jc: "justifyContent",
-  ai: "alignItems",
-};
-
 const textArea = document.getElementById("text-area");
 const preview = document.getElementById("preview");
+const toggle = document.getElementById("toggle");
+
+const obj = {
+  // Padding
+  p: {property: "padding", max: 4, unit: "px"},
+  pt: {property: "paddingTop", max: 1, unit: "px"},
+  pb: {property: "paddingBottom", max: 1, unit: "px"},
+  pl: {property: "paddingLeft", max: 1, unit: "px"},
+  pr: {property: "paddingRight", max: 1, unit: "px"},
+
+  // Margin
+  m: {property: "margin", max: 4, unit: "px"},
+  mt: {property: "marginTop", max: 1, unit: "px"},
+  mb: {property: "marginBottom", max: 1, unit: "px"},
+  ml: {property: "marginLeft", max: 1, unit: "px"},
+  mr: {property: "marginRight", max: 1, unit: "px"},
+
+  // Colors
+  c: {property: "color", max: 1},
+  bg: {property: "backgroundColor", max: 1},
+
+  // Typography
+  fs: {property: "fontSize", max: 1, unit: "px"},
+  fw: {property: "fontWeight", max: 1},
+
+  // Size
+  w: {property: "width", max: 1, unit: "px"},
+  h: {property: "height", max: 1, unit: "px"},
+
+  // Layout
+  d: {property: "display", max: 1},
+  f: {property: "flex", max: 1},
+  jc: {property: "justifyContent", max: 1},
+  ai: {property: "alignItems", max: 1},
+};
 
 textArea.addEventListener("input", () => {
-  const input = textArea.value
-    .replace(/kunal-/g, "")
-    .trim()
-    .split(/\s+/);
+  const keysSorted = Object.keys(obj).sort((a, b) => b.length - a.length);
+  console.log(keysSorted);
 
-  preview.removeAttribute("style"); 
+  const validInputArray = textArea.value.trim().split(/\s+/);
 
-  input.forEach((item) => {
-    if (!item) return; 
+  validInputArray.forEach((element) => {
+    if (!element.startsWith("masala-")) return;
 
-    const parts = item.split("-");
-    if (parts.length < 2) return; 
+    const clean = element.replace(/masala-/, "");
+    const parts = clean.split("-");
 
-    const key = Object.keys(obj)
-      .sort((a, b) => b.length - a.length)
-      .find((k) => parts[0] === k); 
-
-    if (!key) return;
+    const key = keysSorted.find((k) => parts[0] === k);
+    console.log(key);
 
     let value = parts[1];
+    if (!key) return;
 
-    // add px
-    if (
-      ["p","pt","pb","pl","pr","m","mt","mb","ml","mr","w","h","fs"].includes(key)
-    ) {
-      value = value + "px";
+    if(typeof value === "number"){
+      console.log(value);
+      conversion(value);
     }
 
-    preview.style[obj[key]] = value;
-    console.log(preview);
+      preview.style[obj[key].property] = value;
     
+
   });
+});
+
+function conversion(value) {
+
+  if(typeof value !== "number") return 
+
+  document.querySelectorAll("#unit input").forEach((item) => {
+    item.addEventListener("change", () => {
+      const selected = document.querySelector("#unit input:checked");
+      
+      if(selected.value === "rem"){
+        value = value / 16
+      }else if (selected.value === "%"){
+        value = (value / 150 ) * 100
+      }
+    });
+  });
+
+  return value
+}
+
+
+
+toggle.addEventListener("click", () => {
+  const body = document.body.classList;
+  body.toggle("dark");
+
+  if (body.value === "light") {
+    toggle.innerText = "Toggle to Dark";
+  } else {
+    toggle.innerText = "Toggle to Light";
+  }
 });
