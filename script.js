@@ -1,90 +1,79 @@
 const textArea = document.getElementById("text-area");
 const preview = document.getElementById("preview");
-const toggle = document.getElementById("toggle");
+const radios = document.querySelectorAll("#unit input");
 
 const obj = {
-  // Padding
-  p: {property: "padding", max: 4, unit: "px"},
-  pt: {property: "paddingTop", max: 1, unit: "px"},
-  pb: {property: "paddingBottom", max: 1, unit: "px"},
-  pl: {property: "paddingLeft", max: 1, unit: "px"},
-  pr: {property: "paddingRight", max: 1, unit: "px"},
+  p: {property: "padding"},
+  pt: {property: "paddingTop"},
+  pb: {property: "paddingBottom"},
+  pl: {property: "paddingLeft"},
+  pr: {property: "paddingRight"},
 
-  // Margin
-  m: {property: "margin", max: 4, unit: "px"},
-  mt: {property: "marginTop", max: 1, unit: "px"},
-  mb: {property: "marginBottom", max: 1, unit: "px"},
-  ml: {property: "marginLeft", max: 1, unit: "px"},
-  mr: {property: "marginRight", max: 1, unit: "px"},
+  m: {property: "margin"},
+  mt: {property: "marginTop"},
+  mb: {property: "marginBottom"},
+  ml: {property: "marginLeft"},
+  mr: {property: "marginRight"},
 
-  // Colors
-  c: {property: "color", max: 1},
-  bg: {property: "backgroundColor", max: 1},
+  c: {property: "color"},
+  bg: {property: "backgroundColor"},
 
-  // Typography
-  fs: {property: "fontSize", max: 1, unit: "px"},
-  fw: {property: "fontWeight", max: 1},
+  fs: {property: "fontSize"},
+  fw: {property: "fontWeight"},
 
-  // Size
-  w: {property: "width", max: 1, unit: "px"},
-  h: {property: "height", max: 1, unit: "px"},
+  w: {property: "width"},
+  h: {property: "height"},
 
-  // Layout
-  d: {property: "display", max: 1},
-  f: {property: "flex", max: 1},
-  jc: {property: "justifyContent", max: 1},
-  ai: {property: "alignItems", max: 1},
+  d: {property: "display"},
+  f: {property: "flex"},
+  jc: {property: "justifyContent"},
+  ai: {property: "alignItems"},
 };
 
-textArea.addEventListener("input", () => {
-  const keysSorted = Object.keys(obj).sort((a, b) => b.length - a.length);
-  console.log(keysSorted);
+// 🔥 conversion
+function conversion(value) {
+  const selected = document.querySelector("#unit input:checked");
+  const num = parseFloat(value);
 
+  if (selected.value === "rem") {
+    return num / 16 + "rem";
+  } else if (selected.value === "%") {
+    return (num / 150) * 100 + "%";
+  }
+
+  return num + "px";
+}
+
+// 🔥 main engine
+function applyStyles() {
+  const keysSorted = Object.keys(obj).sort((a, b) => b.length - a.length);
   const validInputArray = textArea.value.trim().split(/\s+/);
 
   validInputArray.forEach((element) => {
     if (!element.startsWith("masala-")) return;
 
-    const clean = element.replace(/masala-/, "");
+    const clean = element.replace("masala-", "");
     const parts = clean.split("-");
-
     const key = keysSorted.find((k) => parts[0] === k);
-    console.log(key);
-
-    let value = parts[1];
     if (!key) return;
 
-    if(typeof value === "number"){
-      console.log(value);
-      conversion(value);
+    const rawValue = parts[1];
+
+    // ✅ number vs string
+    if (!isNaN(rawValue)) {
+      preview.style[obj[key].property] = conversion(rawValue);
+    } else {
+      preview.style[obj[key].property] = rawValue;
     }
-
-      preview.style[obj[key].property] = value;
-    
-
   });
-});
-
-function conversion(value) {
-
-  if(typeof value !== "number") return 
-
-  document.querySelectorAll("#unit input").forEach((item) => {
-    item.addEventListener("change", () => {
-      const selected = document.querySelector("#unit input:checked");
-      
-      if(selected.value === "rem"){
-        value = value / 16
-      }else if (selected.value === "%"){
-        value = (value / 150 ) * 100
-      }
-    });
-  });
-
-  return value
 }
 
+// 🔥 events
+textArea.addEventListener("input", applyStyles);
 
+radios.forEach((radio) => {
+  radio.addEventListener("change", applyStyles);
+});
 
 toggle.addEventListener("click", () => {
   const body = document.body.classList;
