@@ -224,7 +224,7 @@ textarea:focus {
   }
 
   .card-header {
-    flex-direction: column;
+      display: flex;
     align-items: flex-start;
     gap: 6px;
     font-size: 14px;
@@ -259,4 +259,5 @@ textarea:focus {
     padding: 5px 10px;
   }
 }
+
 
