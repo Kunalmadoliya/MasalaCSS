@@ -1,51 +1,57 @@
 const textArea = document.getElementById("text-area");
 const preview = document.getElementById("preview");
 const radios = document.querySelectorAll("#unit input");
+const copy = document.getElementById("css-preview");
+const copyBtn = document.getElementById("copy-btn");
+const toggle = document.getElementById("toggle");
 
 const obj = {
-  p: {property: "padding"},
-  pt: {property: "paddingTop"},
-  pb: {property: "paddingBottom"},
-  pl: {property: "paddingLeft"},
-  pr: {property: "paddingRight"},
+  p: { property: "padding", max: 4 },
+  pt: { property: "paddingTop", max: 1 },
+  pb: { property: "paddingBottom", max: 1 },
+  pl: { property: "paddingLeft", max: 1 },
+  pr: { property: "paddingRight", max: 1 },
 
-  m: {property: "margin"},
-  mt: {property: "marginTop"},
-  mb: {property: "marginBottom"},
-  ml: {property: "marginLeft"},
-  mr: {property: "marginRight"},
+  m: { property: "margin", max: 4 },
+  mt: { property: "marginTop", max: 1 },
+  mb: { property: "marginBottom", max: 1 },
+  ml: { property: "marginLeft", max: 1 },
+  mr: { property: "marginRight", max: 1 },
 
-  c: {property: "color"},
-  bg: {property: "backgroundColor"},
+  c: { property: "color", max: 1 },
+  bg: { property: "backgroundColor", max: 1 },
 
-  fs: {property: "fontSize"},
-  fw: {property: "fontWeight"},
+  fs: { property: "fontSize", max: 1 },
+  fw: { property: "fontWeight", max: 1 },
 
-  w: {property: "width"},
-  h: {property: "height"},
+  w: { property: "width", max: 1 },
+  h: { property: "height", max: 1 },
 
-  d: {property: "display"},
-  f: {property: "flex"},
-  jc: {property: "justifyContent"},
-  ai: {property: "alignItems"},
+  d: { property: "display", max: 1 },
+  f: { property: "flex", max: 1 },
+  jc: { property: "justifyContent", max: 1 },
+  ai: { property: "alignItems", max: 1 },
 };
 
-// 🔥 conversion
 function conversion(value) {
   const selected = document.querySelector("#unit input:checked");
   const num = parseFloat(value);
 
   if (selected.value === "rem") {
-    return num / 16 + "rem";
+    return (num / 16).toFixed(3) + "rem";
   } else if (selected.value === "%") {
-    return (num / 150) * 100 + "%";
+    return ((num / 150) * 100).toFixed(2) + "%";
   }
 
   return num + "px";
 }
 
-// 🔥 main engine
+let cssOutput = "";
+
+
 function applyStyles() {
+  cssOutput = "";
+
   const keysSorted = Object.keys(obj).sort((a, b) => b.length - a.length);
   const validInputArray = textArea.value.trim().split(/\s+/);
 
@@ -57,31 +63,56 @@ function applyStyles() {
     const key = keysSorted.find((k) => parts[0] === k);
     if (!key) return;
 
-    const rawValue = parts[1];
+    const max = obj[key].max || 1;
+    const values = parts.slice(1, 1 + max);
 
-    // ✅ number vs string
-    if (!isNaN(rawValue)) {
-      preview.style[obj[key].property] = conversion(rawValue);
-    } else {
-      preview.style[obj[key].property] = rawValue;
-    }
+    const finalValue = values
+      .map((v) => {
+        if (!isNaN(v)) return conversion(v);
+        return v;
+      })
+      .join(" ");
+
+    const property = obj[key].property;
+
+  
+    preview.style[property] = finalValue;
+
+
+    cssOutput += `${property}: ${finalValue};\n`;
   });
+
+  copy.textContent = cssOutput;
 }
 
-// 🔥 events
+
 textArea.addEventListener("input", applyStyles);
 
 radios.forEach((radio) => {
   radio.addEventListener("change", applyStyles);
 });
 
+
 toggle.addEventListener("click", () => {
   const body = document.body.classList;
   body.toggle("dark");
 
-  if (body.value === "light") {
-    toggle.innerText = "Toggle to Dark";
-  } else {
+  if (body.contains("dark")) {
     toggle.innerText = "Toggle to Light";
+  } else {
+    toggle.innerText = "Toggle to Dark";
   }
+});
+
+
+copyBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(copy.textContent);
+
+  copyBtn.textContent = "Copied!";
+  setTimeout(() => {
+    copyBtn.textContent = "Copy";
+  }, 1000);
+
+
+  alert("CSS Copied to Clipboard!")
 });
