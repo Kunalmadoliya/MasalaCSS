@@ -106,6 +106,7 @@ toggle.addEventListener("click", () => {
 
 
 copyBtn.addEventListener("click", () => {
+  if(copy.textContent === "/* styles will appear here */") return 
   navigator.clipboard.writeText(copy.textContent);
 
   copyBtn.textContent = "Copied!";
